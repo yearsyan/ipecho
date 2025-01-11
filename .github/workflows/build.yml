@@ -1,0 +1,34 @@
+name: Build Go Binary for Ubuntu
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4  # 设置 Go 环境
+        with:
+          go-version: '1.23'  # 指定 Go 版本
+
+      - name: Build binary
+        run: |
+          mkdir -p dist
+          GOOS=linux GOARCH=amd64 go build -o dist/ipecho .
+
+      - name: Upload binary as artifact
+        uses: actions/upload-artifact@v3  # 上传生成的二进制文件
+        with:
+          name: ipecho
+          path: dist/ipecho
